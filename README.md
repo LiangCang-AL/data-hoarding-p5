@@ -2,6 +2,8 @@
 
 A p5.js interactive installation about digital residue, data hoarding, and the illusion of deletion.
 
+Direct link redirect：https://liangcang-al.github.io/data-hoarding-p5/
+
 ## Project Description
 
 This project visualizes different types of digital information as physical-like materials on screen.  
