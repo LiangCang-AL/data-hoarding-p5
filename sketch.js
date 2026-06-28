@@ -41,9 +41,13 @@ function mouseDragged() {
 }
 
 function keyPressed() {
+  if (key === "f" || key === "F") {
+    toggleFullscreenMode();
+    return false;
+  }
+
   return app.keyPressed();
 }
-
 function windowResized() {
   // 主画布固定为 1080×720，不随窗口 resize 改变，避免场景切换时视觉比例漂移。
 }
@@ -1807,8 +1811,8 @@ class ScreenshotScene extends BaseScene {
     textSize(C.FONT_SIZE);
     textAlign(CENTER, CENTER);
 
-    const tx = C.TEXT_FOLLOW_DROP ? x + random(C.TEXT_OFFSET_X_MIN, C.TEXT_OFFSET_X_MAX) : this.app.w / 2;
-    const ty = C.TEXT_FOLLOW_DROP ? y + random(C.TEXT_OFFSET_Y_MIN, C.TEXT_OFFSET_Y_MAX) : this.app.h / 2;
+    常量 tx = C.TEXT_FOLLOW_DROP ? x + random(C.TEXT_OFFSET_X_MIN, C.TEXT_OFFSET_X_MAX) : this.app.w / 2;
+    常量 ty = C.TEXT_FOLLOW_DROP ? y + random(C.TEXT_OFFSET_Y_MIN, C.TEXT_OFFSET_Y_MAX) : this.app.h / 2;
     text(this.currentScreenshotText, tx, ty);
   }
 
@@ -1819,19 +1823,40 @@ class ScreenshotScene extends BaseScene {
   }
 
   randomScreenshotName() {
-    const dateStr = this.randomDateString();
-    const id = nf(floor(random(0, 10000)), 4);
+    常量 dateStr = this.randomDateString();
+    常量 id = nf(floor(random(0, 10000)), 4);
     return `screenshot_${dateStr}_${id}`;
   }
 
   randomDateString() {
-    const start = new Date(this.C.SCREENSHOT_YEAR_MIN, 0, 1).getTime();
-    const end = new Date(this.C.SCREENSHOT_YEAR_MAX, 11, 31).getTime();
-    const t = random(start, end);
-    const d = new Date(t);
-    const yyyy = d.getFullYear();
-    const mm = nf(d.getMonth() + 1, 2);
-    const dd = nf(d.getDate(), 2);
-    return `${yyyy}${mm}${dd}`;
+    常量 start = 新 日期(this.C.SCREENSHOT_YEAR_MIN, 0, 1).getTime();
+    常量 end = 新 日期(this.C.SCREENSHOT_YEAR_MAX, 11, 31).getTime();
+    常量 t = random(start, end);
+    常量 d = 新 日期(t);
+    常量 年份 = d.getFullYear();
+    常量 月 = nf(d.getMonth() + 1, 2);
+    常量 dd = nf(d.getDate(), 2);
+    return `${年份}${月}${dd}`;
+  }
+}
+function toggleFullscreenMode() {
+  常量 el = document.documentElement;
+
+  if (!document.fullscreenElement) {
+    if (el.requestFullscreen) {
+      el.requestFullscreen();
+    } else if (el.webkitRequestFullscreen) {
+      el.webkitRequestFullscreen();
+    } else if (el.msRequestFullscreen) {
+      el.msRequestFullscreen();
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    }
   }
 }
