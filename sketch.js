@@ -11,13 +11,14 @@
   运行方式：Cursor 打开文件夹 → 右键 index.html → Open with Live Server
 */
 
-const APP_W = 1080;
-const APP_H = 720;
+const BASE_APP_W = 1080;
+const BASE_APP_H = 720;
 
 let app;
+let cnv;
 
 function setup() {
-  const cnv = createCanvas(APP_W, APP_H);
+  cnv = createCanvas(windowWidth, windowHeight);
   cnv.parent("sketch-holder");
   pixelDensity(1);
   frameRate(60);
@@ -25,7 +26,7 @@ function setup() {
   textAlign(CENTER, CENTER);
   noStroke();
 
-  app = new MultiSceneApp(APP_W, APP_H);
+  app = new MultiSceneApp(width, height);
 }
 
 function draw() {
@@ -49,8 +50,15 @@ function keyPressed() {
   return app.keyPressed();
 }
 function windowResized() {
-  // 主画布固定为 1080×720，不随窗口 resize 改变，避免场景切换时视觉比例漂移。
-}
+    resizeCanvas(windowWidth, windowHeight);
+    textFont("monospace");
+    textAlign(CENTER, CENTER);
+    noStroke();
+  
+    const keepScene = app ? app.currentName : "home";
+    app = new MultiSceneApp(width, height);
+    app.switchTo(keepScene);
+  }
 
 // ============================================================
 // App 总控
@@ -401,11 +409,11 @@ class WheatScene extends BaseScene {
 
       LETTERS: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
 
-      HORIZON_Y: 90,
-      FIELD_BOTTOM: 700,
+      HORIZON_Y: this.H * 0.125,
+      FIELD_BOTTOM: this.H - 20,
       FIELD_ROWS: 34,
-      GRID_MIN_W: 210,
-      GRID_MAX_W: 1040,
+      GRID_MIN_W: this.W * 0.20,
+      GRID_MAX_W: this.W * 0.96,
       GRID_MIN_SIZE: 9,
       GRID_MAX_SIZE: 18,
 
@@ -454,7 +462,10 @@ class WheatScene extends BaseScene {
       HEAP_WIDTH_TOP: 8,
       HEAP_SETTLE_JITTER: 1.4
     };
-
+    const areaScale = (this.W * this.H) / (BASE_APP_W * BASE_APP_H);
+    this.C.MAX_STALKS = floor(constrain(this.C.MAX_STALKS * areaScale, 180, 420));
+    this.C.INITIAL_STALKS = floor(constrain(this.C.INITIAL_STALKS * areaScale, 140, this.C.MAX_STALKS - 20));
+    this.C.SPAWN_EACH_TIME = floor(constrain(this.C.SPAWN_EACH_TIME * areaScale, 10, 24));
     this.scale = 1;
     this.offsetX = 0;
     this.offsetY = 0;
@@ -1325,7 +1336,9 @@ class ProjectScene extends BaseScene {
       ERASE_MARK_LIFE: 22,
       ERASE_MARK_GROW: 0.9
     };
-
+    const areaScale = (this.app.w * this.app.h) / (BASE_APP_W * BASE_APP_H);
+    this.C.MAX_ACTIVE = floor(constrain(this.C.MAX_ACTIVE * areaScale, 160, 360));
+    this.C.MAX_SETTLED = floor(constrain(this.C.MAX_SETTLED * areaScale, 420, 900));
     this.initAll();
   }
 
@@ -1742,8 +1755,13 @@ class ScreenshotScene extends BaseScene {
       TEXT_OFFSET_Y_MAX: 8,
       SCREENSHOT_YEAR_MIN: 2024,
       SCREENSHOT_YEAR_MAX: 2026
-    };
-    this.currentScreenshotText = "";
+      };
+      
+      const areaScale = (this.app.w * this.app.h) / (BASE_APP_W * BASE_APP_H);
+      this.C.DROPS_PER_FRAME = floor(constrain(this.C.DROPS_PER_FRAME * areaScale, 2, 5));
+      this.C.EXTRA_POINTS_PER_FRAME = floor(constrain(this.C.EXTRA_POINTS_PER_FRAME * areaScale, 5, 12));
+      
+      this.currentScreenshotText = "";
   }
 
   onEnter() {
