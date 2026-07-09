@@ -27,14 +27,14 @@ body {
   overflow: hidden;
 }
 
-/* 保持 1080×720 比例，尽量放大，不变形 */
+/* 真正铺满浏览器窗口，不再按 1080×720 留黑边 */
 canvas {
   display: block;
-  width: min(100vw, calc(100vh * 1.5)) !important;
-  height: min(100vh, calc(100vw / 1.5)) !important;
-  margin: auto;
   position: fixed;
   inset: 0;
+  width: 100vw !important;
+  height: 100vh !important;
+  margin: 0 !important;
   outline: none;
   user-select: none;
   -webkit-user-select: none;
